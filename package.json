@@ -1,7 +1,6 @@
 {
   "name": "library-frontend",
   "private": true,
-  "proxy": "http:/localhost:3003",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

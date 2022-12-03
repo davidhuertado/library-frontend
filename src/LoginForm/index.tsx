@@ -8,6 +8,7 @@ interface LoginFormProps {
   // setPassword: React.Dispatch<React.SetStateAction<string>>;
   handleUsernameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const LoginForm = ({
@@ -15,9 +16,10 @@ const LoginForm = ({
   password,
   handleUsernameChange,
   handlePasswordChange,
+  handleSubmit,
 }: LoginFormProps): JSX.Element => {
   return (
-    <form className="form form--login">
+    <form className="form form--login" onSubmit={(e) => handleSubmit(e)}>
       <Input
         type="text"
         name="Username"
