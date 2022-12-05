@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import LoginForm from './LoginForm';
+import LoginForm from './UI/LoginForm';
+import Notification from './UI/Notification';
 
 import loginServices from './services/login.service';
 import './App.css';
@@ -10,6 +11,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [books, setBooks] = useState([]);
   const [error, setError] = useState('');
+  const [notification, setNotification] = useState('');
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -21,25 +23,38 @@ function App() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
+      console.log('entro login');
       const user = await loginServices.login({ username, password });
-      console.log(user);
+      setUser(user);
+      setNotification(`${user.username} logged in`);
+      setTimeout(() => {
+        setNotification('');
+      }, 5000);
+      setUsername('');
+      setPassword('');
     } catch (error) {
       console.error(error);
       setError('invalid username or password');
+      setTimeout(() => {
+        setError('');
+      }, 5000);
     }
   };
-
-  return (
-    <div className="App">
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={handleUsernameChange}
-        handlePasswordChange={handlePasswordChange}
-        handleSubmit={handleLogin}
-      />
-    </div>
-  );
+  if (!user) {
+    return (
+      <div className="App">
+        {notification ? <Notification message={notification} /> : null}
+        {error ? <Notification message={error} /> : null}
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={handleUsernameChange}
+          handlePasswordChange={handlePasswordChange}
+          handleSubmit={handleLogin}
+        />
+      </div>
+    );
+  }
 }
 
 export default App;
