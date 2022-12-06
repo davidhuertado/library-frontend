@@ -1,14 +1,22 @@
 import React from 'react';
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from '@chakra-ui/react';
 
 interface NotificationProps {
-  message: string;
+  message?: string;
+  status?: any;
 }
 
-const Notification = ({ message }: NotificationProps) => {
+const Notification = ({ message, status }: NotificationProps) => {
   return (
-    <div>
-      <p>{message}</p>
-    </div>
+    <Alert status={status}>
+      <AlertIcon />
+      {message}
+    </Alert>
   );
 };
 
