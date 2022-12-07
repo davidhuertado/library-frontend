@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
-  Button,
-} from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
 import LoginForm from './UI/LoginForm';
 import Notification from './UI/Notification';
 import BookCard from './UI/BookCard';
-import Form from './UI/Form';
-// import Input from './UI/Input';
+import ModalForm from './UI/ModalForm';
+import CreateUserForm from './UI/CreateUserForm';
 
 import loginServices from './services/login.service';
 import booksServices from './services/book.service';
@@ -31,6 +24,13 @@ function App() {
   const [error, setError] = useState('');
   const [notification, setNotification] = useState('');
 
+  //For create user Modal
+  const {
+    isOpen: isCreateUserOpen,
+    onOpen: onCreateUserOpen,
+    onClose: onCreateUserClose,
+  } = useDisclosure();
+
   useEffect(() => {
     const fetchBooks = async () => {
       const data = await booksServices.getAll();
@@ -46,7 +46,7 @@ function App() {
             token: string;
             id: string;
           };
-        }) => book.user.username === user.username
+        }) => book.user.username === user!.username
       );
       setBooks(filteredByUser);
       console.log(data);
@@ -55,13 +55,6 @@ function App() {
 
     if (user) fetchBooks();
   }, [user]);
-
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  };
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -77,71 +70,44 @@ function App() {
       setUsername('');
       setPassword('');
     } catch (error) {
-      console.error(error);
+      setUsername('');
+      setPassword('');
       setError('invalid username or password');
       setTimeout(() => {
         setError('');
       }, 5000);
     }
   };
+
   if (!user) {
     return (
       <div className="App">
+        {/* modal for creating user */}
+        <ModalForm
+          isOpen={isCreateUserOpen}
+          onOpen={onCreateUserClose}
+          onClose={onCreateUserClose}
+          bodyContent={<CreateUserForm onCloseFunc={onCreateUserClose} />}
+        />
         {notification ? (
           <Notification status="sucess" message={notification} />
         ) : null}
         {error ? <Notification status="error" message={error} /> : null}
-        {/* <LoginForm
+        <LoginForm
           username={username}
           password={password}
-          handleUsernameChange={handleUsernameChange}
-          handlePasswordChange={handlePasswordChange}
+          setUsername={setUsername}
+          setPassword={setPassword}
           handleSubmit={handleLogin}
-        /> */}
-        <FormControl>
-          <form onSubmit={(e) => handleLogin(e)}>
-            <FormLabel>Username</FormLabel>
-            <Input
-              type="text"
-              value={username}
-              onChange={handleUsernameChange}
-            />
-            <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-            <Button type="submit">Login</Button>
-          </form>
-        </FormControl>
-        <Button>Create user</Button>
-        {/*//   <Input
-        //     type="text"
-        //     name="Username"
-        //     labelText="Username"
-        //     value={username}
-        //     onChange={handleUsernameChange}
-        //   />
-        //   <Input
-        //     type="password"
-        //     name="Password"
-        //     labelText="Password"
-        //     value={password}
-        //     onChange={handlePasswordChange}
-        //   />
-        // </Form>
-        */}
+        />
+
+        <Button onClick={onCreateUserOpen}>Create user</Button>
       </div>
     );
   }
 
   return (
     <div className="App">
-      {/* {notification ? (
-        <Notification status="sucess" message={notification} />
-      ) : null}
-      {error ? <Notification status="error" message={error} /> : null} */}
       {books.map(({ title, author, year, read }) => {
         return (
           <BookCard title={title} author={author} year={year} read={read} />

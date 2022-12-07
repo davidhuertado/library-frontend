@@ -1,41 +1,58 @@
 import React from 'react';
-import Input from '../Input';
+// import Input from '../InputForm';
+import Form from '../Form';
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Input,
+  Box,
+} from '@chakra-ui/react';
 
 interface LoginFormProps {
   username: string;
   password: string;
-  // setUser: React.Dispatch<React.SetStateAction<string>>;
-  // setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleUsernameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setUsername: React.Dispatch<React.SetStateAction<string>>;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+  // handleUsernameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  // handlePasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const LoginForm = ({
   username,
   password,
-  handleUsernameChange,
-  handlePasswordChange,
   handleSubmit,
+  setUsername,
+  setPassword,
 }: LoginFormProps): JSX.Element => {
+  const isErrorUsername = username === '';
+  const isErrorPassword = password === '';
   return (
-    <form className="form form--login" onSubmit={(e) => handleSubmit(e)}>
-      <Input
-        type="text"
-        name="Username"
-        labelText="Username"
-        value={username}
-        onChange={handleUsernameChange}
-      />
-      <Input
-        type="password"
-        name="Password"
-        labelText="Password"
-        value={password}
-        onChange={handlePasswordChange}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <Form buttonText="Log In" onSubmitFunc={handleSubmit}>
+      <Box>
+        <FormControl isInvalid={isErrorUsername}>
+          <FormLabel>Username</FormLabel>
+          <Input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <FormErrorMessage>Username required</FormErrorMessage>
+        </FormControl>
+      </Box>
+      <Box>
+        <FormControl isInvalid={isErrorPassword}>
+          <FormLabel>Password</FormLabel>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <FormErrorMessage>Password required</FormErrorMessage>
+        </FormControl>
+      </Box>
+    </Form>
   );
 };
 export default LoginForm;
