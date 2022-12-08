@@ -8,6 +8,7 @@ import {
   Heading,
   UnorderedList,
   ListItem,
+  Badge,
 } from '@chakra-ui/react';
 
 interface BookCardProps {
@@ -15,6 +16,8 @@ interface BookCardProps {
   author: string;
   year: string;
   read: boolean;
+  id: string;
+  handleToggleRead: (id: string) => void;
 }
 
 const BookCard = ({
@@ -22,6 +25,8 @@ const BookCard = ({
   author,
   year,
   read,
+  id,
+  handleToggleRead,
 }: BookCardProps): JSX.Element => {
   return (
     <Card>
@@ -32,11 +37,17 @@ const BookCard = ({
         <UnorderedList>
           {author && <ListItem>{author}</ListItem>}
           {year && <ListItem>{year}</ListItem>}
-          {read ? <ListItem>Read</ListItem> : <ListItem>Unread</ListItem>}
+          {read ? (
+            <Badge colorScheme="green">Read</Badge>
+          ) : (
+            <Badge colorScheme="purple">Unread</Badge>
+          )}
         </UnorderedList>
       </CardBody>
       <CardFooter>
-        <Button>Vi</Button>
+        <Button onClick={() => handleToggleRead(id)}>
+          Mark as 'unread/read'
+        </Button>
       </CardFooter>
     </Card>
   );

@@ -20,7 +20,7 @@ function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState<User | null>(null);
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<any[]>([]);
   const [error, setError] = useState('');
   const [notification, setNotification] = useState('');
 
@@ -55,6 +55,25 @@ function App() {
 
     if (user) fetchBooks();
   }, [user]);
+
+  const handleToggleRead = async (id: string) => {
+    const book = books.find((book) => book.id === id);
+    const modifiedBook = { ...book, read: !book.read };
+    try {
+      const returnedBook = await booksServices.toggleRead(id, modifiedBook);
+      console.log(returnedBook);
+      const newBooks = books.map((book) =>
+        book.id !== id ? book : { ...returnedBook, user: book.user }
+      );
+
+      setBooks(newBooks);
+    } catch (err) {
+      setError('Error put method');
+      setTimeout(() => {
+        setError('');
+      }, 5000);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -121,9 +140,16 @@ function App() {
 
   return (
     <div className="App">
-      {books.map(({ title, author, year, read }) => {
+      {books.map(({ title, author, year, read, id }) => {
         return (
-          <BookCard title={title} author={author} year={year} read={read} />
+          <BookCard
+            handleToggleRead={handleToggleRead}
+            id={id}
+            title={title}
+            author={author}
+            year={year}
+            read={read}
+          />
         );
       })}
     </div>
