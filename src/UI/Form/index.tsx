@@ -12,7 +12,7 @@ const Form = ({ children, buttonText, onSubmitFunc }: FormProps) => {
     <Box>
       <form onSubmit={(e) => onSubmitFunc(e)}>
         <Box>{children}</Box>
-        <Box>
+        <Box w="100%" display="flex" justifyContent="center" mb="3">
           <Button type="submit">{buttonText}</Button>
         </Box>
       </form>

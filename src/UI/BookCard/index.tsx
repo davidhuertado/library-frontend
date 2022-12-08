@@ -1,4 +1,14 @@
 import React from 'react';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Button,
+  Heading,
+  UnorderedList,
+  ListItem,
+} from '@chakra-ui/react';
 
 interface BookCardProps {
   title: string;
@@ -14,14 +24,21 @@ const BookCard = ({
   read,
 }: BookCardProps): JSX.Element => {
   return (
-    <div>
-      <ul>
-        <li>{title}</li>
-        <li>{author}</li>
-        <li>{year}</li>
-        <li>{read}</li>
-      </ul>
-    </div>
+    <Card>
+      <CardHeader>
+        <Heading size="md">{title}</Heading>
+      </CardHeader>
+      <CardBody>
+        <UnorderedList>
+          {author && <ListItem>{author}</ListItem>}
+          {year && <ListItem>{year}</ListItem>}
+          {read ? <ListItem>Read</ListItem> : <ListItem>Unread</ListItem>}
+        </UnorderedList>
+      </CardBody>
+      <CardFooter>
+        <Button>Vi</Button>
+      </CardFooter>
+    </Card>
   );
 };
 

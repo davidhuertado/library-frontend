@@ -12,9 +12,15 @@ import userService from '../../services/user.service';
 
 interface CreateUserFormProps {
   onCloseFunc: () => void;
+  setError: React.Dispatch<React.SetStateAction<string>>;
+  setNotification: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
+const CreateUserForm = ({
+  onCloseFunc,
+  setError,
+  setNotification,
+}: CreateUserFormProps) => {
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
@@ -25,21 +31,29 @@ const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
         username: newUsername,
         password: newPassword,
       });
-      console.log(newUser);
+
       setNewUsername('');
       setNewPassword('');
       onCloseFunc();
-    } catch (err) {
-      console.error(err);
+      setNotification(`user ${newUser.username} created`);
+      setTimeout(() => {
+        setNotification('');
+      }, 5000);
+    } catch (err: any) {
+      setError(err.response.data.error);
+      onCloseFunc();
+      setTimeout(() => {
+        setError('');
+      }, 5000);
     }
   };
 
   const isErrorUser = newUsername === '';
   const isErrorPassword = newPassword === '';
   return (
-    <Form buttonText="create" onSubmitFunc={handleCreateUserSubmit}>
-      <Box>
-        <FormControl isInvalid={isErrorUser}>
+    <Form buttonText="Create" onSubmitFunc={handleCreateUserSubmit}>
+      <Box mb="4">
+        <FormControl isRequired isInvalid={isErrorUser}>
           <FormLabel>Username</FormLabel>
           <Input
             type="text"
@@ -49,15 +63,15 @@ const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
           <FormErrorMessage>Username required</FormErrorMessage>
         </FormControl>
       </Box>
-      <Box>
-        <FormControl isInvalid={isErrorPassword}>
+      <Box mb="4">
+        <FormControl isRequired isInvalid={isErrorPassword}>
           <FormLabel>Password</FormLabel>
           <Input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
-          <FormErrorMessage>Username required</FormErrorMessage>
+          <FormErrorMessage>Password required</FormErrorMessage>
         </FormControl>
       </Box>
     </Form>

@@ -4,10 +4,9 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Button,
+  Box,
 } from '@chakra-ui/react';
 import Form from '../Form';
 
@@ -29,15 +28,16 @@ const ModalForm = ({
 }: ModalFormProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {headerContent}
-          <ModalCloseButton />
-        </ModalHeader>
-        <ModalBody>{bodyContent}</ModalBody>
-        <ModalFooter></ModalFooter>
-      </ModalContent>
+      <Box>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {headerContent}
+            <ModalCloseButton />
+          </ModalHeader>
+          <ModalBody>{bodyContent}</ModalBody>
+        </ModalContent>
+      </Box>
     </Modal>
   );
 };

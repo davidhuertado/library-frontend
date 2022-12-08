@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { Button, useDisclosure, Box } from '@chakra-ui/react';
 import LoginForm from './UI/LoginForm';
 import Notification from './UI/Notification';
 import BookCard from './UI/BookCard';
@@ -81,13 +81,25 @@ function App() {
 
   if (!user) {
     return (
-      <div className="App">
+      <Box
+        w="100%"
+        height="100vh"
+        display="flex"
+        alignItems="center"
+        flexDirection="column"
+      >
         {/* modal for creating user */}
         <ModalForm
           isOpen={isCreateUserOpen}
           onOpen={onCreateUserClose}
           onClose={onCreateUserClose}
-          bodyContent={<CreateUserForm onCloseFunc={onCreateUserClose} />}
+          bodyContent={
+            <CreateUserForm
+              setNotification={setNotification}
+              setError={setError}
+              onCloseFunc={onCreateUserClose}
+            />
+          }
         />
         {notification ? (
           <Notification status="sucess" message={notification} />
@@ -100,9 +112,10 @@ function App() {
           setPassword={setPassword}
           handleSubmit={handleLogin}
         />
-
-        <Button onClick={onCreateUserOpen}>Create user</Button>
-      </div>
+        <Box mb="4">
+          <Button onClick={onCreateUserOpen}>Create user</Button>
+        </Box>
+      </Box>
     );
   }
 
