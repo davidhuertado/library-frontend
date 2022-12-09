@@ -5,6 +5,7 @@ import Notification from './UI/Notification';
 import BookCard from './UI/BookCard';
 import ModalForm from './UI/ModalForm';
 import CreateUserForm from './UI/CreateUserForm';
+import CreateBookForm from './UI/CreateBookForm';
 
 import loginServices from './services/login.service';
 import booksServices from './services/book.service';
@@ -29,6 +30,11 @@ function App() {
     isOpen: isCreateUserOpen,
     onOpen: onCreateUserOpen,
     onClose: onCreateUserClose,
+  } = useDisclosure();
+  const {
+    isOpen: isCreateBookOpen,
+    onOpen: onCreateBookOpen,
+    onClose: onCreateBookClose,
   } = useDisclosure();
 
   useEffect(() => {
@@ -80,7 +86,9 @@ function App() {
       e.preventDefault();
 
       const user = await loginServices.login({ username, password });
-      console.log(user);
+
+      window.localStorage.setItem('loggedLibraryUser', JSON.stringify(user));
+      booksServices.setToken(user.token);
       setUser(user);
       setNotification(`${user.username} logged in`);
       setTimeout(() => {
@@ -110,7 +118,7 @@ function App() {
         {/* modal for creating user */}
         <ModalForm
           isOpen={isCreateUserOpen}
-          onOpen={onCreateUserClose}
+          onOpen={onCreateUserOpen}
           onClose={onCreateUserClose}
           bodyContent={
             <CreateUserForm
@@ -139,7 +147,29 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <Box
+      w="100%"
+      height="100vh"
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+    >
+      {/* modal for creating book */}
+      <ModalForm
+        isOpen={isCreateBookOpen}
+        onOpen={onCreateBookOpen}
+        onClose={onCreateBookClose}
+        bodyContent={
+          <CreateBookForm
+            setNotification={setNotification}
+            setError={setError}
+            onCloseFunc={onCreateBookClose}
+            user={user}
+            books={books}
+            setBooks={setBooks}
+          />
+        }
+      />
       {books.map(({ title, author, year, read, id }) => {
         return (
           <BookCard
@@ -152,7 +182,10 @@ function App() {
           />
         );
       })}
-    </div>
+      <Box mb="4">
+        <Button onClick={onCreateBookOpen}>Add book</Button>
+      </Box>
+    </Box>
   );
 }
 
