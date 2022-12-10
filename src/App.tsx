@@ -62,6 +62,15 @@ function App() {
     if (user) fetchBooks();
   }, [user]);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedLibraryUser');
+
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+    }
+  }, []);
+
   const handleToggleRead = async (id: string) => {
     const book = books.find((book) => book.id === id);
     const modifiedBook = { ...book, read: !book.read };
@@ -79,6 +88,11 @@ function App() {
         setError('');
       }, 5000);
     }
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    window.localStorage.clear();
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -108,13 +122,7 @@ function App() {
 
   if (!user) {
     return (
-      <Box
-        w="100%"
-        height="100vh"
-        display="flex"
-        alignItems="center"
-        flexDirection="column"
-      >
+      <Box w="100%" display="flex" alignItems="center" flexDirection="column">
         {/* modal for creating user */}
         <ModalForm
           isOpen={isCreateUserOpen}
@@ -147,13 +155,8 @@ function App() {
   }
 
   return (
-    <Box
-      w="100%"
-      height="100vh"
-      display="flex"
-      alignItems="center"
-      flexDirection="column"
-    >
+    <Box w="100%" display="flex" alignItems="center" flexDirection="column">
+      <Button onClick={handleLogout}>Logout</Button>
       {/* modal for creating book */}
       <ModalForm
         isOpen={isCreateBookOpen}
