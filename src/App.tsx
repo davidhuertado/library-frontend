@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Button, useDisclosure, Box } from '@chakra-ui/react';
+import {
+  Button,
+  useDisclosure,
+  Box,
+  SimpleGrid,
+  Heading,
+} from '@chakra-ui/react';
 import LoginForm from './UI/LoginForm';
 import Notification from './UI/Notification';
 import BookCard from './UI/BookCard';
@@ -9,6 +15,8 @@ import CreateBookForm from './UI/CreateBookForm';
 
 import loginServices from './services/login.service';
 import booksServices from './services/book.service';
+
+import backgroundSpace from './assets/images/vincentiu-solomon-ln5drpv_ImI-unsplash.jpg';
 import './App.css';
 
 interface User {
@@ -122,7 +130,13 @@ function App() {
 
   if (!user) {
     return (
-      <Box w="100%" display="flex" alignItems="center" flexDirection="column">
+      <Box
+        w="100%"
+        display="flex"
+        alignItems="center"
+        flexDirection="column"
+        h="100vh"
+      >
         {/* modal for creating user */}
         <ModalForm
           isOpen={isCreateUserOpen}
@@ -155,8 +169,22 @@ function App() {
   }
 
   return (
-    <Box w="100%" display="flex" alignItems="center" flexDirection="column">
-      <Button onClick={handleLogout}>Logout</Button>
+    <Box
+      p="9"
+      w="100%"
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+      h="100vh"
+    >
+      <Box w="100%" display="flex" alignItems="center">
+        <Box ml="">
+          <Heading>{user.username}'s library</Heading>
+        </Box>
+        <Button m="0 0 0 auto" onClick={handleLogout}>
+          Logout
+        </Button>
+      </Box>
       {/* modal for creating book */}
       <ModalForm
         isOpen={isCreateBookOpen}
@@ -173,18 +201,20 @@ function App() {
           />
         }
       />
-      {books.map(({ title, author, year, read, id }) => {
-        return (
-          <BookCard
-            handleToggleRead={handleToggleRead}
-            id={id}
-            title={title}
-            author={author}
-            year={year}
-            read={read}
-          />
-        );
-      })}
+      <SimpleGrid w="100%" spacing="30px" columns={{ sm: 1, md: 4 }}>
+        {books.map(({ title, author, year, read, id }) => {
+          return (
+            <BookCard
+              handleToggleRead={handleToggleRead}
+              id={id}
+              title={title}
+              author={author}
+              year={year}
+              read={read}
+            />
+          );
+        })}
+      </SimpleGrid>
       <Box mb="4">
         <Button onClick={onCreateBookOpen}>Add book</Button>
       </Box>

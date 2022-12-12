@@ -23,13 +23,13 @@ const LoginForm = ({
   setUsername,
   setPassword,
 }: LoginFormProps): JSX.Element => {
-  const isErrorUsername = username === '';
-  const isErrorPassword = password === '';
+  // const isErrorUsername = username === '';
+  // const isErrorPassword = password === '';
   return (
     <Box minWidth="300px" borderWidth="1px" borderRadius="md" p="4" m="10">
       <Form buttonText="Log In" onSubmitFunc={handleSubmit}>
         <Box mb="4">
-          <FormControl isRequired isInvalid={isErrorUsername}>
+          <FormControl isRequired>
             <FormLabel>Username</FormLabel>
             <Input
               type="text"
@@ -40,7 +40,7 @@ const LoginForm = ({
           </FormControl>
         </Box>
         <Box mb="4">
-          <FormControl isRequired isInvalid={isErrorPassword}>
+          <FormControl isRequired>
             <FormLabel>Password</FormLabel>
             <Input
               type="password"

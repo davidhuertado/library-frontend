@@ -48,8 +48,8 @@ const CreateUserForm = ({
     }
   };
 
-  const isErrorUser = newUsername === '';
-  const isErrorPassword = newPassword === '';
+  const isErrorUser = newUsername.length > 0 && newUsername.length < 4;
+  const isErrorPassword = newUsername.length > 0 && newPassword.length < 4;
   return (
     <Form buttonText="Create" onSubmitFunc={handleCreateUserSubmit}>
       <Box mb="4">
@@ -60,12 +60,14 @@ const CreateUserForm = ({
             value={newUsername}
             onChange={(e) => setNewUsername(e.target.value)}
           />
-          <FormErrorMessage>Username required</FormErrorMessage>
+          <FormErrorMessage>
+            Username needs a minimun of 4 characters
+          </FormErrorMessage>
         </FormControl>
       </Box>
       <Box mb="4">
         <FormControl isRequired isInvalid={isErrorPassword}>
-          <FormLabel>Password</FormLabel>
+          <FormLabel>Password needs a minimun of 4 characters</FormLabel>
           <Input
             type="password"
             value={newPassword}
