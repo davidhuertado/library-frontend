@@ -26,7 +26,14 @@ const LoginForm = ({
   // const isErrorUsername = username === '';
   // const isErrorPassword = password === '';
   return (
-    <Box minWidth="300px" borderWidth="1px" borderRadius="md" p="4" m="10">
+    <Box
+      minWidth="300px"
+      borderWidth="1px"
+      borderRadius="md"
+      p="4"
+      m="10"
+      background="#fff"
+    >
       <Form buttonText="Log In" onSubmitFunc={handleSubmit}>
         <Box mb="4">
           <FormControl isRequired>

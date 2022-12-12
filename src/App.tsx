@@ -136,6 +136,8 @@ function App() {
         alignItems="center"
         flexDirection="column"
         h="100vh"
+        backgroundImage={backgroundSpace}
+        backgroundSize="100%"
       >
         {/* modal for creating user */}
         <ModalForm
@@ -162,7 +164,9 @@ function App() {
           handleSubmit={handleLogin}
         />
         <Box mb="4">
-          <Button onClick={onCreateUserOpen}>Create user</Button>
+          <Button variant="secondary" onClick={onCreateUserOpen}>
+            Create user
+          </Button>
         </Box>
       </Box>
     );

@@ -13,7 +13,9 @@ const Form = ({ children, buttonText, onSubmitFunc }: FormProps) => {
       <form onSubmit={(e) => onSubmitFunc(e)}>
         <Box>{children}</Box>
         <Box w="100%" display="flex" justifyContent="center" mb="3">
-          <Button type="submit">{buttonText}</Button>
+          <Button variant="primary" type="submit">
+            {buttonText}
+          </Button>
         </Box>
       </form>
     </Box>
