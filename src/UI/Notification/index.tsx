@@ -12,6 +12,7 @@ interface NotificationProps {
 }
 
 const Notification = ({ message, status }: NotificationProps) => {
+  console.log(message, status);
   return (
     <Alert status={status}>
       <AlertIcon />

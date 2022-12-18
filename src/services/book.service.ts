@@ -9,7 +9,11 @@ const setToken = (newToken: string) => {
 };
 
 const getAll = async () => {
-  const response = await axios.get(baseUrl);
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const response = await axios.get(baseUrl, config);
   return response.data;
 };
 
@@ -34,8 +38,12 @@ const toggleRead = async (id: string, bookToModify: {}) => {
 };
 
 const deleteBook = async (id: string) => {
-  const response = await axios.delete(`${baseUrl}/${id}`);
-  return response;
+  const config = {
+    headers: { Authorization: token },
+  };
+  await axios.delete(`${baseUrl}/${id}`, config);
+
+  return;
 };
 
 export default { getAll, toggleRead, deleteBook, create, setToken };

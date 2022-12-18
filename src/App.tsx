@@ -18,6 +18,7 @@ import booksServices from './services/book.service';
 
 import backgroundSpace from './assets/images/vincentiu-solomon-ln5drpv_ImI-unsplash.jpg';
 import './App.css';
+import bookService from './services/book.service';
 
 interface User {
   token: string;
@@ -46,38 +47,48 @@ function App() {
   } = useDisclosure();
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      const data = await booksServices.getAll();
-      console.log(data);
-      const filteredByUser = data.filter(
-        (book: {
-          title: string;
-          author: string;
-          year: string;
-          read: boolean;
-          user: {
-            username: string;
-            token: string;
-            id: string;
-          };
-        }) => book.user.username === user!.username
-      );
-      setBooks(filteredByUser);
-      console.log(data);
-      console.log(user);
-    };
-
-    if (user) fetchBooks();
-  }, [user]);
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedLibraryUser');
 
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
+
+      bookService.setToken(user.token);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const data = await booksServices.getAll();
+        const filteredByUser = data.filter(
+          (book: {
+            title: string;
+            author: string;
+            year: string;
+            read: boolean;
+            user: {
+              username: string;
+              token: string;
+              id: string;
+            };
+          }) => book.user.username === user!.username
+        );
+        setBooks(filteredByUser);
+      } catch (err: any) {
+        if (err.response.data.error === 'token expired') {
+          setUser(null);
+          window.localStorage.clear();
+        }
+      }
+    };
+
+    if (user) fetchBooks();
+
+    // console.error(err);
+    // setUser(null);
+    // window.localStorage.clear();
+  }, [user]);
 
   const handleToggleRead = async (id: string) => {
     const book = books.find((book) => book.id === id);
@@ -92,6 +103,28 @@ function App() {
       setBooks(newBooks);
     } catch (err) {
       setError('Error put method');
+      setTimeout(() => {
+        setError('');
+      }, 5000);
+    }
+  };
+
+  const handleDeleteBook = async (id: string, name: string) => {
+    try {
+      const response = await bookService.deleteBook(id);
+
+      let copyBooks = books;
+      const newBooks = copyBooks.filter((book) => book.id !== id);
+      setBooks(newBooks);
+
+      setBooks(newBooks);
+      setNotification(`Deleted ${name} book`);
+      setTimeout(() => {
+        setNotification('');
+      }, 5000);
+    } catch (error) {
+      console.error('Error deleting books');
+      setError('Error deleting book');
       setTimeout(() => {
         setError('');
       }, 5000);
@@ -135,10 +168,12 @@ function App() {
         display="flex"
         alignItems="center"
         flexDirection="column"
-        h="100vh"
+        minHeight="100vh"
         backgroundImage={backgroundSpace}
         backgroundSize="100%"
+        pt="5"
       >
+        <Heading color="#fff">My Library</Heading>
         {/* modal for creating user */}
         <ModalForm
           isOpen={isCreateUserOpen}
@@ -153,9 +188,15 @@ function App() {
           }
         />
         {notification ? (
-          <Notification status="sucess" message={notification} />
+          <Box m="3" width="50%" display="flex" justifyContent="center">
+            <Notification status="success" message={notification} />
+          </Box>
         ) : null}
-        {error ? <Notification status="error" message={error} /> : null}
+        {error ? (
+          <Box m="3" width="50%" display="flex" justifyContent="center">
+            <Notification status="error" message={error} />
+          </Box>
+        ) : null}
         <LoginForm
           username={username}
           password={password}
@@ -179,15 +220,23 @@ function App() {
       display="flex"
       alignItems="center"
       flexDirection="column"
-      h="100vh"
+      minHeight="100vh"
+      backgroundImage={backgroundSpace}
+      backgroundSize="100%"
+      backgroundRepeat="repeat"
     >
-      <Box w="100%" display="flex" alignItems="center">
-        <Box ml="">
-          <Heading>{user.username}'s library</Heading>
+      <Box w="100%" display="flex" alignItems="center" mb="5">
+        <Box>
+          <Heading color="#fff">{user.username}'s library</Heading>
         </Box>
-        <Button m="0 0 0 auto" onClick={handleLogout}>
-          Logout
-        </Button>
+        <Box m="0 0 0 auto">
+          <Button variant="primary" onClick={onCreateBookOpen}>
+            Add book
+          </Button>
+          <Button variant="secondary" ml="5" onClick={handleLogout}>
+            Logout
+          </Button>
+        </Box>
       </Box>
       {/* modal for creating book */}
       <ModalForm
@@ -205,11 +254,22 @@ function App() {
           />
         }
       />
+      {notification ? (
+        <Box m="3" width="50%" display="flex" justifyContent="center">
+          <Notification status="success" message={notification} />
+        </Box>
+      ) : null}
+      {error ? (
+        <Box m="3" width="50%" display="flex" justifyContent="center">
+          <Notification status="error" message={error} />
+        </Box>
+      ) : null}
       <SimpleGrid w="100%" spacing="30px" columns={{ sm: 1, md: 4 }}>
         {books.map(({ title, author, year, read, id }) => {
           return (
             <BookCard
               handleToggleRead={handleToggleRead}
+              handleDeleteBook={handleDeleteBook}
               id={id}
               title={title}
               author={author}
@@ -219,9 +279,7 @@ function App() {
           );
         })}
       </SimpleGrid>
-      <Box mb="4">
-        <Button onClick={onCreateBookOpen}>Add book</Button>
-      </Box>
+      <Box mb="4"></Box>
     </Box>
   );
 }

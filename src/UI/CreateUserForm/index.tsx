@@ -34,8 +34,10 @@ const CreateUserForm = ({
 
       setNewUsername('');
       setNewPassword('');
-      onCloseFunc();
+
       setNotification(`user ${newUser.username} created`);
+
+      onCloseFunc();
       setTimeout(() => {
         setNotification('');
       }, 5000);
@@ -67,13 +69,15 @@ const CreateUserForm = ({
       </Box>
       <Box mb="4">
         <FormControl isRequired isInvalid={isErrorPassword}>
-          <FormLabel>Password needs a minimun of 4 characters</FormLabel>
+          <FormLabel>Password</FormLabel>
           <Input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
-          <FormErrorMessage>Password required</FormErrorMessage>
+          <FormErrorMessage>
+            Password needs a minumun of 4 characters
+          </FormErrorMessage>
         </FormControl>
       </Box>
     </Form>

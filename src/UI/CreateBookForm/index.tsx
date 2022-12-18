@@ -43,7 +43,6 @@ const CreateBookForm = ({
         read: read,
         user: user.id,
       });
-      console.log(newBook);
 
       setBooks([...books, newBook]);
 

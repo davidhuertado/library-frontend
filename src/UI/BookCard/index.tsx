@@ -9,6 +9,8 @@ import {
   UnorderedList,
   ListItem,
   Badge,
+  Text,
+  CloseButton,
 } from '@chakra-ui/react';
 
 interface BookCardProps {
@@ -18,6 +20,7 @@ interface BookCardProps {
   read: boolean;
   id: string;
   handleToggleRead: (id: string) => void;
+  handleDeleteBook: (id: string, name: string) => void;
 }
 
 const BookCard = ({
@@ -27,25 +30,42 @@ const BookCard = ({
   read,
   id,
   handleToggleRead,
+  handleDeleteBook,
 }: BookCardProps): JSX.Element => {
   return (
-    <Card>
-      <CardHeader>
-        <Heading size="md">{title}</Heading>
+    <Card textAlign="left" backgroundColor="#fff">
+      <CardHeader display="flex">
+        <Heading size="lg">{title}</Heading>
+        <CloseButton
+          m="0 0 0 auto"
+          onClick={() => handleDeleteBook(id, title)}
+        />
       </CardHeader>
       <CardBody>
-        <UnorderedList>
-          {author && <ListItem>{author}</ListItem>}
-          {year && <ListItem>{year}</ListItem>}
+        <UnorderedList listStyleType="none">
+          {author && (
+            <ListItem>
+              <Text fontSize="lg" fontWeight="bold">
+                Author: {author}
+              </Text>
+            </ListItem>
+          )}
+          {year && (
+            <ListItem>
+              <Text fontWeight="bold">Year: {year}</Text>
+            </ListItem>
+          )}
           {read ? (
-            <Badge colorScheme="green">Read</Badge>
+            <Badge colorScheme="purple" variant="solid">
+              Read
+            </Badge>
           ) : (
             <Badge colorScheme="purple">Unread</Badge>
           )}
         </UnorderedList>
       </CardBody>
-      <CardFooter>
-        <Button onClick={() => handleToggleRead(id)}>
+      <CardFooter display="flex" justifyContent="center">
+        <Button variant="secondary" onClick={() => handleToggleRead(id)}>
           Mark as 'unread/read'
         </Button>
       </CardFooter>
