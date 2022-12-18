@@ -12,6 +12,7 @@ import BookCard from './UI/BookCard';
 import ModalForm from './UI/ModalForm';
 import CreateUserForm from './UI/CreateUserForm';
 import CreateBookForm from './UI/CreateBookForm';
+import Header from './UI/Header';
 
 import loginServices from './services/login.service';
 import booksServices from './services/book.service';
@@ -20,7 +21,7 @@ import backgroundSpace from './assets/images/vincentiu-solomon-ln5drpv_ImI-unspl
 import './App.css';
 import bookService from './services/book.service';
 
-interface User {
+export interface User {
   token: string;
   username: string;
   id: string;
@@ -84,10 +85,6 @@ function App() {
     };
 
     if (user) fetchBooks();
-
-    // console.error(err);
-    // setUser(null);
-    // window.localStorage.clear();
   }, [user]);
 
   const handleToggleRead = async (id: string) => {
@@ -111,8 +108,6 @@ function App() {
 
   const handleDeleteBook = async (id: string, name: string) => {
     try {
-      const response = await bookService.deleteBook(id);
-
       let copyBooks = books;
       const newBooks = copyBooks.filter((book) => book.id !== id);
       setBooks(newBooks);
@@ -171,9 +166,9 @@ function App() {
         minHeight="100vh"
         backgroundImage={backgroundSpace}
         backgroundSize="100%"
-        pt="5"
       >
-        <Heading color="#fff">My Library</Heading>
+        <Header title="My library" />
+
         {/* modal for creating user */}
         <ModalForm
           isOpen={isCreateUserOpen}
@@ -204,18 +199,13 @@ function App() {
           setPassword={setPassword}
           handleSubmit={handleLogin}
         />
-        <Box mb="4">
-          <Button variant="secondary" onClick={onCreateUserOpen}>
-            Create user
-          </Button>
-        </Box>
+        <Box mb="4"></Box>
       </Box>
     );
   }
 
   return (
     <Box
-      p="9"
       w="100%"
       display="flex"
       alignItems="center"
@@ -225,7 +215,20 @@ function App() {
       backgroundSize="100%"
       backgroundRepeat="repeat"
     >
-      <Box w="100%" display="flex" alignItems="center" mb="5">
+      <Header
+        title={`${user.username}'s library`}
+        rightSlot={
+          <Box m="0 0 0 auto">
+            <Button variant="primary" onClick={onCreateBookOpen}>
+              Add book
+            </Button>
+            <Button variant="secondary" ml="5" onClick={handleLogout}>
+              Logout
+            </Button>
+          </Box>
+        }
+      />
+      {/* <Box w="100%" display="flex" alignItems="center" mb="5">
         <Box>
           <Heading color="#fff">{user.username}'s library</Heading>
         </Box>
@@ -237,7 +240,7 @@ function App() {
             Logout
           </Button>
         </Box>
-      </Box>
+      </Box> */}
       {/* modal for creating book */}
       <ModalForm
         isOpen={isCreateBookOpen}
