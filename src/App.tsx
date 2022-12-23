@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  useDisclosure,
-  Box,
-  SimpleGrid,
-  Heading,
-} from '@chakra-ui/react';
+import { Button, useDisclosure, Box, SimpleGrid } from '@chakra-ui/react';
 import LoginForm from './UI/LoginForm';
 import Notification from './UI/Notification';
 import BookCard from './UI/BookCard';
@@ -167,7 +161,16 @@ function App() {
         backgroundImage={backgroundSpace}
         backgroundSize="100%"
       >
-        <Header title="My library" />
+        <Header
+          title="My library"
+          rightSlot={
+            <Box>
+              <Button variant="secondary" onClick={onCreateUserOpen}>
+                Create user
+              </Button>
+            </Box>
+          }
+        />
 
         {/* modal for creating user */}
         <ModalForm
@@ -228,19 +231,7 @@ function App() {
           </Box>
         }
       />
-      {/* <Box w="100%" display="flex" alignItems="center" mb="5">
-        <Box>
-          <Heading color="#fff">{user.username}'s library</Heading>
-        </Box>
-        <Box m="0 0 0 auto">
-          <Button variant="primary" onClick={onCreateBookOpen}>
-            Add book
-          </Button>
-          <Button variant="secondary" ml="5" onClick={handleLogout}>
-            Logout
-          </Button>
-        </Box>
-      </Box> */}
+
       {/* modal for creating book */}
       <ModalForm
         isOpen={isCreateBookOpen}
@@ -267,7 +258,13 @@ function App() {
           <Notification status="error" message={error} />
         </Box>
       ) : null}
-      <SimpleGrid w="100%" spacing="30px" columns={{ sm: 1, md: 4 }}>
+      <SimpleGrid
+        w="100%"
+        spacing="30px"
+        p="20"
+        columns={{ sm: 1, md: 2, xl: 4 }}
+        id="booksGrid"
+      >
         {books.map(({ title, author, year, read, id }) => {
           return (
             <BookCard

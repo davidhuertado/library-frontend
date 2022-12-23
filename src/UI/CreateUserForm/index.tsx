@@ -61,6 +61,7 @@ const CreateUserForm = ({
             type="text"
             value={newUsername}
             onChange={(e) => setNewUsername(e.target.value)}
+            id="createUsernameInput"
           />
           <FormErrorMessage>
             Username needs a minimun of 4 characters
@@ -74,6 +75,7 @@ const CreateUserForm = ({
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            id="createPasswordInput"
           />
           <FormErrorMessage>
             Password needs a minumun of 4 characters

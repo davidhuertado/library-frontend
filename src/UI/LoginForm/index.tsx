@@ -42,6 +42,7 @@ const LoginForm = ({
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              id="loginUsernameInput"
             />
             <FormErrorMessage>Username required</FormErrorMessage>
           </FormControl>
@@ -53,6 +54,7 @@ const LoginForm = ({
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              id="loginPasswordInput"
             />
             <FormErrorMessage>Password required</FormErrorMessage>
           </FormControl>

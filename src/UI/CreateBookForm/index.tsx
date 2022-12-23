@@ -76,6 +76,7 @@ const CreateBookForm = ({
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            id="titleInput"
           />
           <FormErrorMessage>Title required</FormErrorMessage>
         </FormControl>
@@ -87,6 +88,7 @@ const CreateBookForm = ({
             type="text"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
+            id="authorInput"
           />
         </FormControl>
       </Box>
@@ -97,13 +99,19 @@ const CreateBookForm = ({
             type="number"
             value={year}
             onChange={(e) => setYear(e.target.value)}
+            id="yearInput"
           />
         </FormControl>
       </Box>
       <Box mb="4">
         <FormControl display="flex" alignItems="center">
           <FormLabel mb="0">Do you already read it?</FormLabel>
-          <Switch size="md" checked={read} onChange={() => setRead(!read)} />
+          <Switch
+            id="isReadInput"
+            size="md"
+            checked={read}
+            onChange={() => setRead(!read)}
+          />
         </FormControl>
       </Box>
     </Form>
