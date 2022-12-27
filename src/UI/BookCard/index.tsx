@@ -33,7 +33,12 @@ const BookCard = ({
   handleDeleteBook,
 }: BookCardProps): JSX.Element => {
   return (
-    <Card className="bookcard" textAlign="left" backgroundColor="#fff">
+    <Card
+      className="bookcard"
+      textAlign="left"
+      backgroundColor="#fff"
+      maxWidth="350px"
+    >
       <CardHeader display="flex">
         <Heading size="lg">{title}</Heading>
         <CloseButton

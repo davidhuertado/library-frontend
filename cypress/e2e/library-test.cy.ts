@@ -38,7 +38,7 @@ describe('Note app', function () {
     cy.contains('user testCypress created');
   });
 
-  describe.only('with logged user', function () {
+  describe('with logged user', function () {
     beforeEach(function () {
       cy.get('#loginUsernameInput').type('admin');
       cy.get('#loginPasswordInput').type('pass');
@@ -56,7 +56,7 @@ describe('Note app', function () {
       cy.get('#isReadInput').click({ force: true });
       cy.contains('Create').click();
     });
-    describe.only('with a book created', function () {
+    describe('with a book created', function () {
       beforeEach(function () {
         cy.contains('Add book').click();
         cy.get('#titleInput').type('test with cypress');

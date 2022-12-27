@@ -86,7 +86,7 @@ function App() {
     const modifiedBook = { ...book, read: !book.read };
     try {
       const returnedBook = await booksServices.toggleRead(id, modifiedBook);
-      console.log(returnedBook);
+
       const newBooks = books.map((book) =>
         book.id !== id ? book : { ...returnedBook, user: book.user }
       );
@@ -102,6 +102,7 @@ function App() {
 
   const handleDeleteBook = async (id: string, name: string) => {
     try {
+      await booksServices.deleteBook(id);
       let copyBooks = books;
       const newBooks = copyBooks.filter((book) => book.id !== id);
       setBooks(newBooks);
@@ -159,7 +160,7 @@ function App() {
         flexDirection="column"
         minHeight="100vh"
         backgroundImage={backgroundSpace}
-        backgroundSize="100%"
+        backgroundSize={{ lg: '100%' }}
       >
         <Header
           title="My library"
@@ -222,10 +223,20 @@ function App() {
         title={`${user.username}'s library`}
         rightSlot={
           <Box m="0 0 0 auto">
-            <Button variant="primary" onClick={onCreateBookOpen}>
+            <Button
+              mb={{ base: '10px', sm: ' 0' }}
+              width="105px"
+              variant="primary"
+              onClick={onCreateBookOpen}
+            >
               Add book
             </Button>
-            <Button variant="secondary" ml="5" onClick={handleLogout}>
+            <Button
+              variant="secondary"
+              width="105px"
+              ml={{ sm: '5' }}
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           </Box>
@@ -275,6 +286,7 @@ function App() {
               author={author}
               year={year}
               read={read}
+              key={id}
             />
           );
         })}
