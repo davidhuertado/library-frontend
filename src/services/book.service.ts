@@ -1,7 +1,8 @@
 import axios from 'axios';
 const baseUrl = '/api/books';
+import { bookInterface } from '../interfaces/book';
 //For development
-// axios.defaults.baseURL = `http://localhost:3003`;
+axios.defaults.baseURL = `http://localhost:3003`;
 
 let token: null | string = null;
 

@@ -7,27 +7,53 @@ import ModalForm from './UI/ModalForm';
 import CreateUserForm from './UI/CreateUserForm';
 import CreateBookForm from './UI/CreateBookForm';
 import Header from './UI/Header';
-
-import loginServices from './services/login.service';
-import booksServices from './services/book.service';
-
 import backgroundSpace from './assets/images/vincentiu-solomon-ln5drpv_ImI-unsplash.jpg';
 import './App.css';
 import bookService from './services/book.service';
 
-export interface User {
-  token: string;
-  username: string;
-  id: string;
-}
+import {
+  initializeBooks,
+  changeRead,
+  deleteEntry,
+} from './reducers/bookReducer';
+import {
+  setUserIdleStatus,
+  unsetUser,
+  setUser,
+  logUserAsync,
+} from './reducers/userReducer';
+import {
+  setNotification,
+  setError,
+  clearNotification,
+} from './reducers/notificationReducer';
+
+import { bookWithIdInterface } from './interfaces/book';
+
+import { userInterface } from './interfaces/user';
+
+import { useAppDispatch, useAppSelector } from './hooks';
 
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState<User | null>(null);
-  const [books, setBooks] = useState<any[]>([]);
-  const [error, setError] = useState('');
-  const [notification, setNotification] = useState('');
+  // const [user, setUser] = useState<userInterface | null>(null);
+
+  // Redux
+  const dispatch = useAppDispatch();
+  const booksRedux = useAppSelector((state) => state.books);
+  const user = useAppSelector((state) => state.user.user);
+  const userError = useAppSelector((state) => state.user.error);
+  console.log(userError);
+  const notification = useAppSelector((state) => state.notification);
+
+  let filteredBooks: bookWithIdInterface[];
+
+  if (booksRedux && user) {
+    filteredBooks = booksRedux.filter(
+      (book: bookWithIdInterface) => book.user.id === user!.id
+    );
+  }
 
   //For create user Modal
   const {
@@ -46,109 +72,69 @@ function App() {
 
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-
+      dispatch(setUser(user));
       bookService.setToken(user.token);
     }
   }, []);
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const data = await booksServices.getAll();
-        const filteredByUser = data.filter(
-          (book: {
-            title: string;
-            author: string;
-            year: string;
-            read: boolean;
-            user: {
-              username: string;
-              token: string;
-              id: string;
-            };
-          }) => book.user.username === user!.username
-        );
-        setBooks(filteredByUser);
-      } catch (err: any) {
-        if (err.response.data.error === 'token expired') {
-          setUser(null);
-          window.localStorage.clear();
-        }
+    try {
+      dispatch(initializeBooks());
+    } catch (err: any) {
+      if (err.response.data.error === 'token expired') {
+        setUser(null);
+        window.localStorage.clear();
       }
-    };
-
-    if (user) fetchBooks();
-  }, [user]);
+      // if (user) fetchBooks();
+    }
+  }, [user, dispatch]);
 
   const handleToggleRead = async (id: string) => {
-    const book = books.find((book) => book.id === id);
-    const modifiedBook = { ...book, read: !book.read };
+    const book = filteredBooks!.find((book) => book.id === id);
+
+    const modifiedBook = { ...book, read: !book!.read };
     try {
-      const returnedBook = await booksServices.toggleRead(id, modifiedBook);
-
-      const newBooks = books.map((book) =>
-        book.id !== id ? book : { ...returnedBook, user: book.user }
-      );
-
-      setBooks(newBooks);
+      dispatch(changeRead(id, modifiedBook));
     } catch (err) {
-      setError('Error put method');
+      dispatch(setError('Error put method'));
       setTimeout(() => {
-        setError('');
+        dispatch(setError(''));
       }, 5000);
     }
   };
 
   const handleDeleteBook = async (id: string, name: string) => {
     try {
-      await booksServices.deleteBook(id);
-      let copyBooks = books;
-      const newBooks = copyBooks.filter((book) => book.id !== id);
-      setBooks(newBooks);
-
-      setBooks(newBooks);
-      setNotification(`Deleted ${name} book`);
+      dispatch(deleteEntry(id, name));
+      dispatch(setNotification(`Deleted ${name} book`));
       setTimeout(() => {
-        setNotification('');
+        dispatch(clearNotification(null));
       }, 5000);
     } catch (error) {
       console.error('Error deleting books');
-      setError('Error deleting book');
+      dispatch(setError('Error deleting book'));
       setTimeout(() => {
-        setError('');
+        dispatch(clearNotification(null));
       }, 5000);
     }
   };
 
   const handleLogout = () => {
-    setUser(null);
-    window.localStorage.clear();
+    dispatch(unsetUser(null));
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-
-      const user = await loginServices.login({ username, password });
-
-      window.localStorage.setItem('loggedLibraryUser', JSON.stringify(user));
-      booksServices.setToken(user.token);
-      setUser(user);
-      setNotification(`${user.username} logged in`);
-      setTimeout(() => {
-        setNotification('');
-      }, 5000);
-      setUsername('');
-      setPassword('');
-    } catch (error) {
-      setUsername('');
-      setPassword('');
-      setError('invalid username or password');
-      setTimeout(() => {
-        setError('');
-      }, 5000);
-    }
+    e.preventDefault();
+    dispatch(logUserAsync({ username, password }));
+    // dispatch(setNotification(`${username} logged in`));
+    // setTimeout(() => {
+    //   dispatch(clearNotification(null));
+    // }, 5000);
+    setUsername('');
+    setPassword('');
+    setTimeout(() => {
+      dispatch(setUserIdleStatus(null));
+    }, 5000);
   };
 
   if (!user) {
@@ -186,14 +172,14 @@ function App() {
             />
           }
         />
-        {notification ? (
+        {notification.message ? (
           <Box m="3" width="50%" display="flex" justifyContent="center">
-            <Notification status="success" message={notification} />
+            <Notification status="success" message={notification.message} />
           </Box>
         ) : null}
-        {error ? (
+        {userError ? (
           <Box m="3" width="50%" display="flex" justifyContent="center">
-            <Notification status="error" message={error} />
+            <Notification status="error" message={userError} />
           </Box>
         ) : null}
         <LoginForm
@@ -249,24 +235,17 @@ function App() {
         onOpen={onCreateBookOpen}
         onClose={onCreateBookClose}
         bodyContent={
-          <CreateBookForm
-            setNotification={setNotification}
-            setError={setError}
-            onCloseFunc={onCreateBookClose}
-            user={user}
-            books={books}
-            setBooks={setBooks}
-          />
+          <CreateBookForm onCloseFunc={onCreateBookClose} user={user} />
         }
       />
       {notification ? (
         <Box m="3" width="50%" display="flex" justifyContent="center">
-          <Notification status="success" message={notification} />
+          <Notification status="success" message={notification.message} />
         </Box>
       ) : null}
-      {error ? (
+      {notification.error ? (
         <Box m="3" width="50%" display="flex" justifyContent="center">
-          <Notification status="error" message={error} />
+          <Notification status="error" message={notification.message} />
         </Box>
       ) : null}
       <SimpleGrid
@@ -276,7 +255,7 @@ function App() {
         columns={{ sm: 1, md: 2, xl: 4 }}
         id="booksGrid"
       >
-        {books.map(({ title, author, year, read, id }) => {
+        {filteredBooks.map(({ title, author, year, read, id }) => {
           return (
             <BookCard
               handleToggleRead={handleToggleRead}

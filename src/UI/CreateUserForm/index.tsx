@@ -1,4 +1,7 @@
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
+// import { setNotification, setError } from '../../reducers/notificationReducer';
+import { useAppDispatch } from '../../hooks';
+import { createUserAsync, setUserIdleStatus } from '../../reducers/userReducer';
 
 import {
   FormControl,
@@ -8,46 +11,38 @@ import {
   Box,
 } from '@chakra-ui/react';
 import Form from '../Form';
-import userService from '../../services/user.service';
 
 interface CreateUserFormProps {
   onCloseFunc: () => void;
-  setError: React.Dispatch<React.SetStateAction<string>>;
-  setNotification: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const CreateUserForm = ({
-  onCloseFunc,
-  setError,
-  setNotification,
-}: CreateUserFormProps) => {
+const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
+  const dispatch = useAppDispatch();
+
   const handleCreateUserSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-      const newUser = await userService.create({
+    e.preventDefault();
+    const newUser = dispatch(
+      createUserAsync({
         username: newUsername,
         password: newPassword,
-      });
+      })
+    );
+    setNewUsername('');
+    setNewPassword('');
+    // dispatch(setNotification(`user ${newUser.username} created`));
+    onCloseFunc();
+    setTimeout(() => {
+      dispatch(setUserIdleStatus(null));
+    }, 5000);
 
-      setNewUsername('');
-      setNewPassword('');
-
-      setNotification(`user ${newUser.username} created`);
-
-      onCloseFunc();
-      setTimeout(() => {
-        setNotification('');
-      }, 5000);
-    } catch (err: any) {
-      setError(err.response.data.error);
-      onCloseFunc();
-      setTimeout(() => {
-        setError('');
-      }, 5000);
-    }
+    // dispatch(setError(err.response.data.error));
+    // onCloseFunc();
+    // setTimeout(() => {
+    //   dispatch(setError(''));
+    // }, 5000);
   };
 
   const isErrorUser = newUsername.length > 0 && newUsername.length < 4;

@@ -9,7 +9,10 @@ import {
   Switch,
 } from '@chakra-ui/react';
 import Form from '../Form';
-import bookService from '../../services/book.service';
+// import bookService from '../../services/book.service';
+import { useDispatch } from 'react-redux';
+import { createBook } from '../../reducers/bookReducer';
+import { useAppDispatch } from '../../hooks';
 
 interface CreateUserFormProps {
   onCloseFunc: () => void;
@@ -33,18 +36,31 @@ const CreateBookForm = ({
   const [year, setYear] = useState('');
   const [read, setRead] = useState(false);
 
+  const dispatch = useAppDispatch();
   const handleCreateBookSubmit = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
-      const newBook = await bookService.create({
-        title: title,
-        author: author ? author : 'N/S',
-        year: year ? year : 'N/S',
-        read: read,
-        user: user.id,
-      });
+      // const newBook = await bookService.create({
+      //   title: title,
+      //   author: author ? author : 'N/S',
+      //   year: year ? year : 'N/S',
+      //   read: read,
+      //   user: user.id,
+      // });
 
-      setBooks([...books, newBook]);
+      // setBooks([...books, newBook]);
+      dispatch(
+        createBook(
+          {
+            title: title,
+            author: author ? author : 'N/S',
+            year: year ? year : 'N/S',
+            read: read,
+            user: user.id,
+          },
+          user
+        )
+      );
 
       setTitle('');
       setAuthor('');

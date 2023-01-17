@@ -1,4 +1,5 @@
 import React from 'react';
+import { bookInterface } from '../../interfaces/book';
 import {
   Card,
   CardHeader,
@@ -13,12 +14,12 @@ import {
   CloseButton,
 } from '@chakra-ui/react';
 
-interface BookCardProps {
-  title: string;
-  author: string;
-  year: string;
-  read: boolean;
-  id: string;
+interface BookCardProps extends bookInterface {
+  // title: string;
+  // author: string;
+  // year: string;
+  // read: boolean;
+  // id: string;
   handleToggleRead: (id: string) => void;
   handleDeleteBook: (id: string, name: string) => void;
 }
