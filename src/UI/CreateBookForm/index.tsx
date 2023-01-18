@@ -10,75 +10,47 @@ import {
 } from '@chakra-ui/react';
 import Form from '../Form';
 // import bookService from '../../services/book.service';
-import { useDispatch } from 'react-redux';
-import { createBook } from '../../reducers/bookReducer';
-import { useAppDispatch } from '../../hooks';
+
+import {
+  createBook,
+  createBookAsync,
+  cleanBooksStatus,
+} from '../../reducers/bookReducer';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 interface CreateUserFormProps {
   onCloseFunc: () => void;
-  setError: React.Dispatch<React.SetStateAction<string>>;
-  setNotification: React.Dispatch<React.SetStateAction<string>>;
+
   user: { token: string; username: string; id: string };
-  books: any[];
-  setBooks: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const CreateBookForm = ({
-  onCloseFunc,
-  setError,
-  setNotification,
-  user,
-  books,
-  setBooks,
-}: CreateUserFormProps) => {
+const CreateBookForm = ({ onCloseFunc }: CreateUserFormProps) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [year, setYear] = useState('');
   const [read, setRead] = useState(false);
 
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
   const handleCreateBookSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-      // const newBook = await bookService.create({
-      //   title: title,
-      //   author: author ? author : 'N/S',
-      //   year: year ? year : 'N/S',
-      //   read: read,
-      //   user: user.id,
-      // });
-
-      // setBooks([...books, newBook]);
-      dispatch(
-        createBook(
-          {
-            title: title,
-            author: author ? author : 'N/S',
-            year: year ? year : 'N/S',
-            read: read,
-            user: user.id,
-          },
-          user
-        )
-      );
-
-      setTitle('');
-      setAuthor('');
-      setYear('');
-      setRead(false);
-      onCloseFunc();
-      setNotification(`new book created`);
-      setTimeout(() => {
-        setNotification('');
-      }, 5000);
-    } catch (err: any) {
-      setError(err.response.data.error);
-      console.error(err.response.data.error);
-      onCloseFunc();
-      setTimeout(() => {
-        setError('');
-      }, 5000);
-    }
+    e.preventDefault();
+    dispatch(
+      createBookAsync({
+        title: title,
+        author: author ? author : 'N/S',
+        year: year ? year : 'N/S',
+        read: read,
+        user: user!.id,
+      })
+    );
+    setTitle('');
+    setAuthor('');
+    setYear('');
+    setRead(false);
+    onCloseFunc();
+    setTimeout(() => {
+      cleanBooksStatus(null);
+    }, 5000);
   };
 
   const isErrorUser = author === '';

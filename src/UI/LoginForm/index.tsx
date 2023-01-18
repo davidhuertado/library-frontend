@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Form from '../Form';
 import {
   FormControl,
@@ -7,24 +7,24 @@ import {
   Input,
   Box,
 } from '@chakra-ui/react';
+import { useAppDispatch } from '../../hooks';
+import { logUserAsync, setUserIdleStatus } from '../../reducers/userReducer';
 
-interface LoginFormProps {
-  username: string;
-  password: string;
-  setUsername: React.Dispatch<React.SetStateAction<string>>;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-}
+const LoginForm = (): JSX.Element => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useAppDispatch();
 
-const LoginForm = ({
-  username,
-  password,
-  handleSubmit,
-  setUsername,
-  setPassword,
-}: LoginFormProps): JSX.Element => {
-  // const isErrorUsername = username === '';
-  // const isErrorPassword = password === '';
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(logUserAsync({ username, password }));
+    setUsername('');
+    setPassword('');
+    setTimeout(() => {
+      dispatch(setUserIdleStatus(null));
+    }, 5000);
+  };
+
   return (
     <Box
       minWidth="300px"
@@ -34,7 +34,7 @@ const LoginForm = ({
       m="10"
       background="#fff"
     >
-      <Form buttonText="Log In" onSubmitFunc={handleSubmit}>
+      <Form buttonText="Log In" onSubmitFunc={handleLogin}>
         <Box mb="4">
           <FormControl isRequired>
             <FormLabel>Username</FormLabel>

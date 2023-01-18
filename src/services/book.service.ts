@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { bookWithIdInterface } from '../interfaces/book';
 const baseUrl = '/api/books';
-import { bookInterface } from '../interfaces/book';
+
 //For development
 axios.defaults.baseURL = `http://localhost:3003`;
 
@@ -34,8 +35,8 @@ const create = async (bookData: {
   return response.data;
 };
 
-const toggleRead = async (id: string, bookToModify: {}) => {
-  const response = await axios.put(`${baseUrl}/${id}`, bookToModify);
+const toggleRead = async (id: string, modifiedBook: bookWithIdInterface) => {
+  const response = await axios.put(`${baseUrl}/${id}`, modifiedBook);
   return response.data;
 };
 

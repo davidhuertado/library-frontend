@@ -4,10 +4,22 @@ import loginService from '../services/login.service';
 import bookService from '../services/book.service';
 import userService from '../services/user.service';
 
-const initialState: any = {
+interface userStateInterface {
+  user: {
+    username: string;
+    id: string;
+    token: string;
+  } | null;
+  status: string;
+  notification: string;
+  error: boolean;
+}
+
+const initialState: userStateInterface = {
   user: null,
   status: 'idle',
-  error: '',
+  error: false,
+  notification: '',
 };
 
 export const logUserAsync = createAsyncThunk(
@@ -48,18 +60,21 @@ const userSlice = createSlice({
       state.user = null;
     },
     setUserIdleStatus(state, action) {
-      state.error = '';
+      state.error = false;
+      state.notification = '';
       state.status = 'idle';
     },
   },
-  extraReducers: (builder) => {
+  extraReducers(builder) {
     builder
       .addCase(createUserAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.notification = `${action.payload.username} user created`;
       })
       .addCase(createUserAsync.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.notification = action.error.message!;
+        state.error = true;
       })
       .addCase(createUserAsync.pending, (state, action) => {
         state.status = 'loading';
@@ -72,12 +87,13 @@ const userSlice = createSlice({
         bookService.setToken(action.payload.token);
         state.status = 'succeeded';
         state.user = action.payload;
+        state.notification = 'Successful login';
       })
 
       .addCase(logUserAsync.rejected, (state, action) => {
-        console.log(action.payload);
         state.status = 'failed';
-        state.error = action.error.message;
+        state.notification = action.error.message!;
+        state.error = true;
       })
       .addCase(logUserAsync.pending, (state, action) => {
         state.status = 'loading';

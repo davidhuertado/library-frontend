@@ -24,7 +24,7 @@ const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
 
   const handleCreateUserSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newUser = dispatch(
+    dispatch(
       createUserAsync({
         username: newUsername,
         password: newPassword,

@@ -1,5 +1,10 @@
-import React from 'react';
-import { bookInterface } from '../../interfaces/book';
+import {
+  toggleReadAsync,
+  deleteBookAsync,
+  cleanBooksStatus,
+} from '../../reducers/bookReducer';
+import { useAppDispatch } from '../../hooks';
+import { bookWithIdInterface } from '../../interfaces/book';
 import {
   Card,
   CardHeader,
@@ -14,25 +19,26 @@ import {
   CloseButton,
 } from '@chakra-ui/react';
 
-interface BookCardProps extends bookInterface {
-  // title: string;
-  // author: string;
-  // year: string;
-  // read: boolean;
-  // id: string;
-  handleToggleRead: (id: string) => void;
-  handleDeleteBook: (id: string, name: string) => void;
+interface BookCardProps {
+  book: bookWithIdInterface;
 }
 
-const BookCard = ({
-  title,
-  author,
-  year,
-  read,
-  id,
-  handleToggleRead,
-  handleDeleteBook,
-}: BookCardProps): JSX.Element => {
+const BookCard = ({ book }: BookCardProps): JSX.Element => {
+  const dispatch = useAppDispatch();
+
+  const handleToggleRead = async (id: string) => {
+    const modifiedBook = { ...book, read: !book.read };
+    dispatch(toggleReadAsync({ id, modifiedBook }));
+    setTimeout(() => {
+      dispatch(cleanBooksStatus(null));
+    }, 5000);
+  };
+  const handleDeleteBook = async (id: string) => {
+    dispatch(deleteBookAsync(id));
+    setTimeout(() => {
+      dispatch(cleanBooksStatus(null));
+    }, 5000);
+  };
   return (
     <Card
       className="bookcard"
@@ -41,27 +47,24 @@ const BookCard = ({
       maxWidth="350px"
     >
       <CardHeader display="flex">
-        <Heading size="lg">{title}</Heading>
-        <CloseButton
-          m="0 0 0 auto"
-          onClick={() => handleDeleteBook(id, title)}
-        />
+        <Heading size="lg">{book.title}</Heading>
+        <CloseButton m="0 0 0 auto" onClick={() => handleDeleteBook(book.id)} />
       </CardHeader>
       <CardBody>
         <UnorderedList listStyleType="none">
-          {author && (
+          {book.author && (
             <ListItem>
               <Text fontSize="lg" fontWeight="bold">
-                Author: {author}
+                Author: {book.author}
               </Text>
             </ListItem>
           )}
-          {year && (
+          {book.year && (
             <ListItem>
-              <Text fontWeight="bold">Year: {year}</Text>
+              <Text fontWeight="bold">Year: {book.year}</Text>
             </ListItem>
           )}
-          {read ? (
+          {book.read ? (
             <Badge colorScheme="purple" variant="solid">
               Read
             </Badge>
@@ -71,7 +74,7 @@ const BookCard = ({
         </UnorderedList>
       </CardBody>
       <CardFooter display="flex" justifyContent="center">
-        <Button variant="secondary" onClick={() => handleToggleRead(id)}>
+        <Button variant="secondary" onClick={() => handleToggleRead(book.id)}>
           Mark as 'unread/read'
         </Button>
       </CardFooter>
