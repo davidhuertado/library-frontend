@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button, useDisclosure, Box, SimpleGrid } from '@chakra-ui/react';
 import LoginForm from './UI/LoginForm';
 import Notification from './UI/Notification';
@@ -6,18 +6,14 @@ import BookCard from './UI/BookCard';
 import ModalForm from './UI/ModalForm';
 import CreateUserForm from './UI/CreateUserForm';
 import CreateBookForm from './UI/CreateBookForm';
+import BooksGrid from './UI/BooksGrid';
 import Header from './UI/Header';
 import backgroundSpace from './assets/images/vincentiu-solomon-ln5drpv_ImI-unsplash.jpg';
 import './App.css';
 import bookService from './services/book.service';
 
-import { fetchBooksAsync, deleteEntry } from './reducers/bookReducer';
+import { fetchBooksAsync } from './reducers/bookReducer';
 import { unsetUser, setUser } from './reducers/userReducer';
-import {
-  setNotification,
-  setError,
-  clearNotification,
-} from './reducers/notificationReducer';
 
 import { bookWithIdInterface } from './interfaces/book';
 
@@ -26,18 +22,8 @@ import { useAppDispatch, useAppSelector } from './hooks';
 function App() {
   // Redux
   const dispatch = useAppDispatch();
-  const booksRedux = useAppSelector((state) => state.books.books);
+  // const booksRedux = useAppSelector((state) => state.books.books);
   const user = useAppSelector((state) => state.user.user);
-  console.log(booksRedux);
-
-  let filteredBooks: bookWithIdInterface[] = [];
-
-  if (booksRedux && user) {
-    filteredBooks = booksRedux.filter(
-      (book: bookWithIdInterface) => book.user.id === user!.id
-    );
-  }
-  console.log(booksRedux);
 
   //For create user Modal
   const {
@@ -60,9 +46,9 @@ function App() {
     }
   }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(fetchBooksAsync());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchBooksAsync());
+  // }, []);
 
   const handleLogout = () => {
     dispatch(unsetUser(null));
@@ -104,7 +90,7 @@ function App() {
     );
   }
 
-  if (filteredBooks) {
+  if (user) {
     return (
       <Box
         w="100%"
@@ -150,18 +136,7 @@ function App() {
           }
         />
         <Notification />
-        <SimpleGrid
-          w="100%"
-          spacing="30px"
-          p="20"
-          columns={{ sm: 1, md: 2, xl: 4 }}
-          id="booksGrid"
-        >
-          {filteredBooks.map((book) => {
-            return <BookCard book={book} key={book.id} />;
-          })}
-        </SimpleGrid>
-        <Box mb="4"></Box>
+        <BooksGrid />
       </Box>
     );
   }

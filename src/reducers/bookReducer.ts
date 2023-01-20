@@ -8,14 +8,14 @@ import bookService from '../services/book.service';
 interface booksSliceInterface {
   books: bookWithIdInterface[];
   status: string;
-  error: string;
+  error: boolean;
   notification: string;
 }
 
 const initialState: booksSliceInterface = {
   books: [],
   status: 'idle',
-  error: '',
+  error: false,
   notification: '',
 };
 
@@ -78,7 +78,8 @@ const bookSlice = createSlice({
     },
     cleanBooksStatus(state, action) {
       state.status = 'idle';
-      state.error = '';
+      state.error = false;
+      state.notification = '';
     },
   },
   extraReducers(builder) {
@@ -113,8 +114,8 @@ const bookSlice = createSlice({
       })
       .addCase(createBookAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log(action.payload);
         state.books.push(action.payload);
+        state.notification = `${action.payload.title}'s entry created`;
       })
       .addCase(createBookAsync.rejected, (state, action) => {
         state.status = 'failed';

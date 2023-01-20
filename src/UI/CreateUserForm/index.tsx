@@ -32,7 +32,7 @@ const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
     );
     setNewUsername('');
     setNewPassword('');
-    // dispatch(setNotification(`user ${newUser.username} created`));
+
     onCloseFunc();
     setTimeout(() => {
       dispatch(setUserIdleStatus(null));

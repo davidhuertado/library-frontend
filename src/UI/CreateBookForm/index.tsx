@@ -11,11 +11,7 @@ import {
 import Form from '../Form';
 // import bookService from '../../services/book.service';
 
-import {
-  createBook,
-  createBookAsync,
-  cleanBooksStatus,
-} from '../../reducers/bookReducer';
+import { createBookAsync, cleanBooksStatus } from '../../reducers/bookReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 
 interface CreateUserFormProps {
@@ -43,14 +39,16 @@ const CreateBookForm = ({ onCloseFunc }: CreateUserFormProps) => {
         user: user!.id,
       })
     );
+
     setTitle('');
     setAuthor('');
     setYear('');
     setRead(false);
-    onCloseFunc();
+
     setTimeout(() => {
-      cleanBooksStatus(null);
+      dispatch(cleanBooksStatus(null));
     }, 5000);
+    onCloseFunc();
   };
 
   const isErrorUser = author === '';

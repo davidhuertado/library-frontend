@@ -87,12 +87,12 @@ const userSlice = createSlice({
         bookService.setToken(action.payload.token);
         state.status = 'succeeded';
         state.user = action.payload;
-        state.notification = 'Successful login';
+        state.notification = `${action.payload.username} successful login `;
       })
 
       .addCase(logUserAsync.rejected, (state, action) => {
         state.status = 'failed';
-        state.notification = action.error.message!;
+        state.notification = 'Wrong credentials';
         state.error = true;
       })
       .addCase(logUserAsync.pending, (state, action) => {
