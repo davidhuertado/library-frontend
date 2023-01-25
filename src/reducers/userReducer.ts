@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { userInterface } from '../interfaces/user';
 import loginService from '../services/login.service';
 import bookService from '../services/book.service';
 import userService from '../services/user.service';
@@ -69,7 +68,7 @@ const userSlice = createSlice({
     builder
       .addCase(createUserAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.notification = `${action.payload.username} user created`;
+        state.notification = `user ${action.payload.username} created`;
       })
       .addCase(createUserAsync.rejected, (state, action) => {
         state.status = 'failed';
@@ -87,12 +86,12 @@ const userSlice = createSlice({
         bookService.setToken(action.payload.token);
         state.status = 'succeeded';
         state.user = action.payload;
-        state.notification = `${action.payload.username} successful login `;
+        state.notification = `${action.payload.username} logged in`;
       })
 
       .addCase(logUserAsync.rejected, (state, action) => {
         state.status = 'failed';
-        state.notification = 'Wrong credentials';
+        state.notification = 'Invalid username or password';
         state.error = true;
       })
       .addCase(logUserAsync.pending, (state, action) => {
@@ -104,11 +103,3 @@ const userSlice = createSlice({
 export const { setUser, unsetUser, setUserIdleStatus } = userSlice.actions;
 
 export default userSlice.reducer;
-
-// export const logUser = (credentials: any) => {
-//   return async (dispatch: any) => {
-//     const user = await loginService.login(credentials);
-//     console.log(user);
-//     dispatch(setUser(user));
-//   };
-// };

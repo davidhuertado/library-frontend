@@ -23,7 +23,6 @@ export const fetchBooksAsync = createAsyncThunk(
   'book/fetchBookAsyncStatus',
   async () => {
     const books = await bookService.getAll();
-    console.log(books);
     return books;
   }
 );
@@ -31,7 +30,6 @@ export const createBookAsync = createAsyncThunk(
   'book/createBookThunk',
   async (content: bookWithoutIdInterface) => {
     const book = await bookService.create(content);
-    console.log(book);
     return book;
   }
 );
@@ -128,7 +126,6 @@ const bookSlice = createSlice({
       .addCase(toggleReadAsync.fulfilled, (state, action) => {
         state.status = 'succeeded';
         const changedBook = action.payload;
-        console.log(changedBook);
         state.books = state.books.map((book: bookWithIdInterface) =>
           book.id !== changedBook.id ? book : changedBook
         );
@@ -153,33 +150,3 @@ export const {
 } = bookSlice.actions;
 
 export default bookSlice.reducer;
-
-// export const initializeBooks = () => {
-//   return async (dispatch: any) => {
-//     const books = await bookService.getAll();
-
-//     dispatch(setBooks(books));
-//   };
-// };
-
-export const createBook = (content: bookWithoutIdInterface, user: any) => {
-  return async (dispatch: any) => {
-    const book = await bookService.create(content);
-    dispatch(appendBook(content));
-  };
-};
-
-export const changeRead = (id: string, book: bookWithIdInterface) => {
-  return async (dispatch: any) => {
-    const changedBook = await bookService.toggleRead(id, book);
-
-    dispatch(toggleRead({ ...book, read: !book.read }));
-  };
-};
-
-export const deleteEntry = (id: string, name: string) => {
-  return async (dispatch: any) => {
-    await bookService.deleteBook(id);
-    dispatch(deleteBook(id));
-  };
-};

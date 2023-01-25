@@ -33,14 +33,8 @@ const Notification = ({ message, status }: NotificationProps) => {
         </Alert>
       </Box>
     );
-  } else return null;
-
-  // return (
-  //   <Alert status={status}>
-  //     <AlertIcon />
-  //     {message}
-  //   </Alert>
-  // );
+  }
+  return null;
 };
 
 export default Notification;

@@ -3,7 +3,7 @@ import { bookWithIdInterface } from '../interfaces/book';
 const baseUrl = '/api/books';
 
 //For development
-axios.defaults.baseURL = `http://localhost:3003`;
+// axios.defaults.baseURL = `http://localhost:3003`;
 
 let token: null | string = null;
 

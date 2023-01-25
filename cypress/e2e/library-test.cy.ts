@@ -14,7 +14,7 @@ describe('Note app', function () {
   it('front page can be opened', function () {
     cy.contains('My library');
   });
-  it('log in with existing uer', function () {
+  it('log in with existing user', function () {
     cy.get('#loginUsernameInput').type('admin');
     cy.get('#loginPasswordInput').type('pass');
     cy.contains('Log In').click();
@@ -25,7 +25,7 @@ describe('Note app', function () {
     cy.get('#loginUsernameInput').type('nullUser');
     cy.get('#loginPasswordInput').type('pass');
     cy.contains('Log In').click();
-    cy.contains('invalid username or password');
+    cy.contains('Invalid username or password');
   });
 
   it('creates a user', () => {

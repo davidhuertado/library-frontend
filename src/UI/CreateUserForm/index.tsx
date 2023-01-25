@@ -37,12 +37,6 @@ const CreateUserForm = ({ onCloseFunc }: CreateUserFormProps) => {
     setTimeout(() => {
       dispatch(setUserIdleStatus(null));
     }, 5000);
-
-    // dispatch(setError(err.response.data.error));
-    // onCloseFunc();
-    // setTimeout(() => {
-    //   dispatch(setError(''));
-    // }, 5000);
   };
 
   const isErrorUser = newUsername.length > 0 && newUsername.length < 4;

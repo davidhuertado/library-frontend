@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
-import { Button, useDisclosure, Box, SimpleGrid } from '@chakra-ui/react';
+import { useEffect } from 'react';
+import { Button, useDisclosure, Box } from '@chakra-ui/react';
+import bookService from './services/book.service';
+import { unsetUser, setUser } from './reducers/userReducer';
+import { useAppDispatch, useAppSelector } from './hooks';
 import LoginForm from './UI/LoginForm';
 import Notification from './UI/Notification';
-import BookCard from './UI/BookCard';
 import ModalForm from './UI/ModalForm';
 import CreateUserForm from './UI/CreateUserForm';
 import CreateBookForm from './UI/CreateBookForm';
@@ -10,27 +12,20 @@ import BooksGrid from './UI/BooksGrid';
 import Header from './UI/Header';
 import backgroundSpace from './assets/images/vincentiu-solomon-ln5drpv_ImI-unsplash.jpg';
 import './App.css';
-import bookService from './services/book.service';
-
-import { fetchBooksAsync } from './reducers/bookReducer';
-import { unsetUser, setUser } from './reducers/userReducer';
-
-import { bookWithIdInterface } from './interfaces/book';
-
-import { useAppDispatch, useAppSelector } from './hooks';
 
 function App() {
-  // Redux
   const dispatch = useAppDispatch();
-  // const booksRedux = useAppSelector((state) => state.books.books);
   const user = useAppSelector((state) => state.user.user);
+  const booksError = useAppSelector((state) => state.books.error);
 
-  //For create user Modal
+  //  For create user Modal
   const {
     isOpen: isCreateUserOpen,
     onOpen: onCreateUserOpen,
     onClose: onCreateUserClose,
   } = useDisclosure();
+
+  //  Create Book modal
   const {
     isOpen: isCreateBookOpen,
     onOpen: onCreateBookOpen,
@@ -45,10 +40,6 @@ function App() {
       bookService.setToken(user.token);
     }
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   dispatch(fetchBooksAsync());
-  // }, []);
 
   const handleLogout = () => {
     dispatch(unsetUser(null));
