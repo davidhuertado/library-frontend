@@ -16,7 +16,6 @@ import './App.css';
 function App() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
-  const booksError = useAppSelector((state) => state.books.error);
 
   //  For create user Modal
   const {
@@ -81,56 +80,54 @@ function App() {
     );
   }
 
-  if (user) {
-    return (
-      <Box
-        w="100%"
-        display="flex"
-        alignItems="center"
-        flexDirection="column"
-        minHeight="100vh"
-        backgroundImage={backgroundSpace}
-        backgroundSize="100%"
-        backgroundRepeat="repeat"
-      >
-        <Header
-          title={`${user.username}'s library`}
-          rightSlot={
-            <Box m="0 0 0 auto">
-              <Button
-                mb={{ base: '10px', sm: ' 0' }}
-                width="105px"
-                variant="primary"
-                onClick={onCreateBookOpen}
-              >
-                Add book
-              </Button>
-              <Button
-                variant="secondary"
-                width="105px"
-                ml={{ sm: '5' }}
-                onClick={handleLogout}
-              >
-                Logout
-              </Button>
-            </Box>
-          }
-        />
+  return (
+    <Box
+      w="100%"
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+      minHeight="100vh"
+      backgroundImage={backgroundSpace}
+      backgroundSize="100%"
+      backgroundRepeat="repeat"
+    >
+      <Header
+        title={`${user.username}'s library`}
+        rightSlot={
+          <Box m="0 0 0 auto">
+            <Button
+              mb={{ base: '10px', sm: ' 0' }}
+              width="105px"
+              variant="primary"
+              onClick={onCreateBookOpen}
+            >
+              Add book
+            </Button>
+            <Button
+              variant="secondary"
+              width="105px"
+              ml={{ sm: '5' }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </Box>
+        }
+      />
 
-        {/* modal for creating book */}
-        <ModalForm
-          isOpen={isCreateBookOpen}
-          onOpen={onCreateBookOpen}
-          onClose={onCreateBookClose}
-          bodyContent={
-            <CreateBookForm onCloseFunc={onCreateBookClose} user={user} />
-          }
-        />
-        <Notification />
-        <BooksGrid />
-      </Box>
-    );
-  }
+      {/* modal for creating book */}
+      <ModalForm
+        isOpen={isCreateBookOpen}
+        onOpen={onCreateBookOpen}
+        onClose={onCreateBookClose}
+        bodyContent={
+          <CreateBookForm onCloseFunc={onCreateBookClose} user={user} />
+        }
+      />
+      <Notification />
+      <BooksGrid />
+    </Box>
+  );
 }
 
 export default App;
