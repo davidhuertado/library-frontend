@@ -9,18 +9,21 @@ const BooksGrid = () => {
   const dispatch = useAppDispatch();
   const fetchedBooks = useAppSelector((state) => state.books.books);
   const user = useAppSelector((state) => state.user.user);
+  console.log(fetchedBooks);
 
   let filteredBooks: bookWithIdInterface[] = [];
 
   if (fetchedBooks && user) {
     filteredBooks = fetchedBooks.filter(
-      (book: bookWithIdInterface) => book.user.id === user!.id
+      (book: bookWithIdInterface) => book.user._id === user!.id
     );
   }
 
   useEffect(() => {
     dispatch(fetchBooksAsync());
   }, [dispatch]);
+
+  console.log(filteredBooks);
   return (
     <SimpleGrid
       w="100%"
